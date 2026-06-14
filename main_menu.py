@@ -100,7 +100,7 @@ class MainMenu:
 
     def run_game(self, game_id: str) -> None:
         if game_id == "country":
-            from country_game import CountryGame
+            from games.country.game import CountryGame
 
             self.active_game = CountryGame(
                 screen=self.screen,
@@ -109,7 +109,7 @@ class MainMenu:
                 on_back=self.return_to_menu,
             )
         elif game_id == "math":
-            from math_game import Game
+            from games.math.game import Game
 
             self.active_game = Game(
                 screen_surface=self.screen,

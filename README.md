@@ -15,8 +15,8 @@
 - 🔢 运算符数量限制挑战
 - 🧠 逻辑模式关卡（if-else 编程思维）
 - ⌨️ 键盘和鼠标操作支持
-- 🧩 題庫集中在 `game_config.py`，方便維護
-- 🔀 可在 `game_config.py` 中切換是否隨機題目順序
+- 🧩 各遊戲都有自己的資料夾與 config，方便分開維護
+- 🔀 可在 `games/math/config.py` 中切換 B 關是否隨機題目順序
 
 ## 安装依赖
 
@@ -42,9 +42,11 @@ python3 math_game.py
 
 - `main.py`：主選單入口
 - `main_menu.py`：選擇遊戲主視窗
-- `country_game.py`：A 關「跟著晶片環遊世界」
-- `math_game.py`：B 關「像工程師一樣思考」
-- `game_config.py`：B 關題庫設定
+- `games/country/game.py`：A 關「跟著晶片環遊世界」
+- `games/country/config.py`：A 關說明、國家題目、提示、地圖位置與計分規則
+- `games/math/game.py`：B 關「像工程師一樣思考」
+- `games/math/config.py`：B 關題庫設定
+- `country_game.py`、`math_game.py`、`game_config.py`：相容舊指令的薄入口
 - `ui_shared.py`：共用字體、顏色與文字工具
 - `assets/fonts/NotoSansCJK-Regular.ttc`：中文與日文顯示用一般字體
 - `assets/fonts/NotoSansCJK-Bold.ttc`：中文與日文顯示用粗體字體
@@ -80,9 +82,10 @@ python3 math_game.py
 
 ## 題庫設定
 
-所有題目都集中在 [game_config.py](game_config.py) 中。
+A 關資料集中在 [games/country/config.py](games/country/config.py)。
+B 關題目集中在 [games/math/config.py](games/math/config.py)。
 
-可以在 `GAME_CONFIG` 裡調整：
+可以在 `games/math/config.py` 的 `GAME_CONFIG` 裡調整：
 
 - `randomize_levels = False`：固定題目順序
 - `randomize_levels = True`：每次啟動時隨機排列正式題目，示範題固定第一關
