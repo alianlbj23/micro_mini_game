@@ -56,6 +56,40 @@ TEXT: Dict[str, Dict[str, str]] = {
         "rules_1": "每題會顯示 3 個提示，請從 4 個選項中選出正確國家。",
         "rules_2": "每題先讀情境故事、3 個提示與思考例子，再從 4 個選項中推理正確國家。",
         "rules_3": "答對一般題加 100 分，bonus 題答對加 150 分，答錯不扣分。",
+        "summary": "7 題｜一般題 100 分｜bonus 題 150 分",
+        "practice_label": "練習題",
+        "bonus_label": "Bonus 挑戰",
+        "normal_label": "科技據點調查",
+        "target_country": "目標國家",
+    },
+    "ja": {
+        "start": "チャレンジ開始",
+        "back": "メニューへ",
+        "score": "得点",
+        "mission": "Mission",
+        "hint": "ヒント",
+        "scenario": "ストーリー",
+        "thinking": "考え方の例",
+        "choices": "答えを選ぶ",
+        "correct": "正解です！",
+        "wrong": "不正解です。正解は：",
+        "knowledge": "豆知識",
+        "next": "次の問題",
+        "finish": "完了",
+        "restart": "もう一度",
+        "done": "ミッション完了！",
+        "done_text": "半導体サプライチェーンの国クイズを完了しました。",
+        "correct_count": "正解数",
+        "time": "時間",
+        "final_time": "クリアタイム",
+        "rules_1": "各問題では3つのヒントを読み、4つの選択肢から正しい国を選びます。",
+        "rules_2": "ストーリー、3つのヒント、考え方の例を読んで、正しい国を推理します。",
+        "rules_3": "通常問題は100点、bonus問題は150点。不正解でも減点はありません。",
+        "summary": "7問｜通常問題 100点｜bonus問題 150点",
+        "practice_label": "練習問題",
+        "bonus_label": "Bonus チャレンジ",
+        "normal_label": "技術拠点調査",
+        "target_country": "目標の国",
     },
 }
 
@@ -69,7 +103,7 @@ class CountryGame:
         pygame.display.set_caption("Chip World Tour")
         self.clock = pygame.time.Clock()
         self.fonts = make_fonts()
-        self.lang = "zh"
+        self.lang = initial_lang if initial_lang in TEXT else "zh"
         self.running = True
         self.phase = "start"
         self.index = 0
@@ -83,13 +117,16 @@ class CountryGame:
         self.click_pos = None
 
     def t(self, key: str) -> str:
-        return TEXT[self.lang][key]
+        return TEXT.get(self.lang, TEXT["zh"]).get(key, TEXT["zh"][key])
 
     def current_question(self) -> dict:
         return QUESTIONS[self.index]
 
+    def question_text(self, question: dict) -> dict:
+        return question["text"].get(self.lang) or question["text"]["zh"]
+
     def question_points(self, question: dict) -> int:
-        return POINTS_BONUS if question["type"] == "bonus" else POINTS_NORMAL
+        return question.get("points") or (POINTS_BONUS if question["type"] == "bonus" else POINTS_NORMAL)
 
     def elapsed_seconds(self) -> int:
         if self.start_time is None:
@@ -102,13 +139,14 @@ class CountryGame:
 
     def question_label(self, question: dict) -> str:
         if question["type"] == "practice":
-            return "練習題"
+            return self.t("practice_label")
         if question["type"] == "bonus":
-            return "Bonus 挑戰"
-        return "科技據點調查"
+            return self.t("bonus_label")
+        return self.t("normal_label")
 
     def thinking_text(self, question: dict) -> str:
-        return question["thinking_example"].replace(question["answer"], "目標國家")
+        text = self.question_text(question)
+        return text["thinking_example"].replace(text["answer"], self.t("target_country"))
 
     def go_back(self) -> None:
         self.running = False
@@ -149,8 +187,7 @@ class CountryGame:
         draw_wrapped(self.screen, self.t("rules_2"), self.fonts["normal"], INK, pygame.Rect(card.x + 52, card.y + 190, card.width - 104, 55), 5)
         draw_wrapped(self.screen, self.t("rules_3"), self.fonts["normal"], INK, pygame.Rect(card.x + 52, card.y + 250, card.width - 104, 55), 5)
 
-        summary = f"7 題｜一般題 {POINTS_NORMAL} 分｜bonus 題 {POINTS_BONUS} 分"
-        draw_text(self.screen, summary, self.fonts["normal"], MUTED, (card.x + 52, card.y + 315))
+        draw_text(self.screen, self.t("summary"), self.fonts["normal"], MUTED, (card.x + 52, card.y + 315))
 
         start_rect = pygame.Rect(card.centerx - 95, card.y + 350, 190, 54)
         button(self.screen, start_rect, self.t("start"), self.fonts["button"], GREEN)
@@ -162,6 +199,7 @@ class CountryGame:
 
     def draw_question(self) -> None:
         question = self.current_question()
+        text = self.question_text(question)
         total = len(QUESTIONS)
         left = pygame.Rect(34, 110, 720, 650)
         right = pygame.Rect(784, 110, 370, 650)
@@ -170,16 +208,16 @@ class CountryGame:
         pygame.draw.rect(self.screen, CARD, right, border_radius=8)
         pygame.draw.rect(self.screen, LINE, right, 2, border_radius=8)
 
-        draw_text(self.screen, f"{self.t('mission')} {question['id']:02d} / {total:02d}", self.fonts["subtitle"], BLUE, (left.x + 32, left.y + 28))
+        draw_text(self.screen, f"{self.t('mission')} {self.index + 1:02d} / {total:02d}", self.fonts["subtitle"], BLUE, (left.x + 32, left.y + 28))
         draw_text(self.screen, self.question_label(question), self.fonts["title"], BLACK, (left.x + 32, left.y + 66))
 
         scenario_rect = pygame.Rect(left.x + 32, left.y + 116, left.width - 64, 96)
         pygame.draw.rect(self.screen, SOFT_AMBER, scenario_rect, border_radius=8)
         draw_text(self.screen, self.t("scenario"), self.fonts["small"], MUTED, (scenario_rect.x + 16, scenario_rect.y + 10))
-        draw_wrapped(self.screen, question["scenario"], self.fonts["small"], INK, pygame.Rect(scenario_rect.x + 16, scenario_rect.y + 34, scenario_rect.width - 32, 56), 3)
+        draw_wrapped(self.screen, text["scenario"], self.fonts["small"], INK, pygame.Rect(scenario_rect.x + 16, scenario_rect.y + 34, scenario_rect.width - 32, 56), 3)
 
         y = left.y + 226
-        for idx, hint in enumerate(question["hints"], start=1):
+        for idx, hint in enumerate(text["hints"], start=1):
             hint_rect = pygame.Rect(left.x + 32, y, left.width - 64, 72)
             pygame.draw.rect(self.screen, SOFT_BLUE, hint_rect, border_radius=8)
             draw_text(self.screen, f"{self.t('hint')} {idx}", self.fonts["tiny"], MUTED, (hint_rect.x + 16, hint_rect.y + 8))
@@ -194,7 +232,7 @@ class CountryGame:
         draw_text(self.screen, self.t("choices"), self.fonts["subtitle"], BLACK, (right.x + 28, right.y + 28))
         click = self.click_pos
         mouse = pygame.mouse.get_pos()
-        for idx, choice in enumerate(question["choices"]):
+        for idx, choice in enumerate(text["choices"]):
             rect = pygame.Rect(right.x + 30, right.y + 96 + idx * 96, right.width - 60, 62)
             hover = rect.collidepoint(mouse)
             pygame.draw.rect(self.screen, SOFT_GREEN if hover else WHITE, rect, border_radius=8)
@@ -206,8 +244,9 @@ class CountryGame:
 
     def answer(self, choice: str) -> None:
         question = self.current_question()
+        text = self.question_text(question)
         self.selected_choice = choice
-        self.is_correct = choice == question["answer"]
+        self.is_correct = choice == text["answer"]
         if self.is_correct:
             self.correct_count += 1
             self.score += self.question_points(question)
@@ -215,16 +254,17 @@ class CountryGame:
 
     def draw_result(self) -> None:
         question = self.current_question()
+        text = self.question_text(question)
         card = pygame.Rect(170, 145, 860, 520)
         pygame.draw.rect(self.screen, CARD, card, border_radius=8)
         pygame.draw.rect(self.screen, GREEN if self.is_correct else RED, card, 3, border_radius=8)
 
-        result_text = self.t("correct") if self.is_correct else f"{self.t('wrong')}{question['answer']}"
+        result_text = self.t("correct") if self.is_correct else f"{self.t('wrong')}{text['answer']}"
         result_color = GREEN if self.is_correct else RED
         draw_text(self.screen, result_text, self.fonts["title"], result_color, (card.x + 48, card.y + 50))
-        draw_text(self.screen, question["title"], self.fonts["subtitle"], BLACK, (card.x + 48, card.y + 112))
+        draw_text(self.screen, text["title"], self.fonts["subtitle"], BLACK, (card.x + 48, card.y + 112))
         draw_text(self.screen, self.t("knowledge"), self.fonts["subtitle"], BLUE, (card.x + 48, card.y + 180))
-        draw_wrapped(self.screen, question["explanation"], self.fonts["normal"], INK, pygame.Rect(card.x + 48, card.y + 222, card.width - 96, 100), 6)
+        draw_wrapped(self.screen, text["explanation"], self.fonts["normal"], INK, pygame.Rect(card.x + 48, card.y + 222, card.width - 96, 100), 6)
 
         points = self.question_points(question)
         points_text = f"+{points}" if self.is_correct else "+0"
