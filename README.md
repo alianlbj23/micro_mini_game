@@ -7,7 +7,7 @@
 - 主選單可選擇不同闖關遊戲
 - 所有遊戲都在同一個 Pygame 視窗內切換，不會另外開新視窗
 - 遊戲內可按「回主畫面」或 `ESC` 返回主選單
-- A 關：記憶體跨國製程，包含國家線索問答與世界地圖定位
+- A 關：Global Tech Detective 全球科技偵探，包含 7 題國家推理選擇題
 - B 關：透過程式驗證結果，包含 PDF 內的示範題與 10 題正式挑戰
 - 🌐 中日雙語支援（中文、日文）
 - 內附完整 Noto Sans CJK 字體，避免中文/日文顯示成方框
@@ -42,8 +42,8 @@ python3 math_game.py
 
 - `main.py`：主選單入口
 - `main_menu.py`：選擇遊戲主視窗
-- `games/country/game.py`：A 關「跟著晶片環遊世界」
-- `games/country/config.py`：A 關說明、國家題目、提示、地圖位置與計分規則
+- `games/country/game.py`：A 關「Global Tech Detective：全球科技偵探」
+- `games/country/config.py`：A 關題目、提示、選項、答案、解說與計分設定
 - `games/math/game.py`：B 關「像工程師一樣思考」
 - `games/math/config.py`：B 關題庫設定
 - `country_game.py`、`math_game.py`、`game_config.py`：相容舊指令的薄入口
