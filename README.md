@@ -1,12 +1,17 @@
-# Micro Game - Math Puzzle
+# Micro Game - Challenge Games
 
-一个用 Pygame 实现的数学益智游戏，支持中文和日语。
+用 Pygame 實作的闖關活動遊戲集，依照 `闖關活動詳細版.pdf` 拆成 A、B 兩個獨立遊戲，並提供主選單。支援中文與日文。
 
 ## 功能特性
 
-- 🎮 10 个逐级递进的关卡
-- 🌐 中英双语支持（中文、日语）
-- ⏱️ 计时功能（从第二关开始计时）
+- 主選單可選擇不同闖關遊戲
+- 所有遊戲都在同一個 Pygame 視窗內切換，不會另外開新視窗
+- 遊戲內可按「回主畫面」或 `ESC` 返回主選單
+- A 關：記憶體跨國製程，包含國家線索問答與世界地圖定位
+- B 關：透過程式驗證結果，包含 PDF 內的示範題與 10 題正式挑戰
+- 🌐 中日雙語支援（中文、日文）
+- 內附完整 Noto Sans CJK 字體，避免中文/日文顯示成方框
+- ⏱️ 計時功能
 - 🔢 运算符数量限制挑战
 - 🧠 逻辑模式关卡（if-else 编程思维）
 - ⌨️ 键盘和鼠标操作支持
@@ -26,7 +31,25 @@ pip3 install pygame
 python3 main.py
 ```
 
-## 游戏操作
+也可以單獨啟動個別遊戲：
+
+```bash
+python3 country_game.py
+python3 math_game.py
+```
+
+## 檔案結構
+
+- `main.py`：主選單入口
+- `main_menu.py`：選擇遊戲主視窗
+- `country_game.py`：A 關「跟著晶片環遊世界」
+- `math_game.py`：B 關「像工程師一樣思考」
+- `game_config.py`：B 關題庫設定
+- `ui_shared.py`：共用字體、顏色與文字工具
+- `assets/fonts/NotoSansCJK-Regular.ttc`：中文與日文顯示用一般字體
+- `assets/fonts/NotoSansCJK-Bold.ttc`：中文與日文顯示用粗體字體
+
+## B 關操作
 
 ### 鼠标操作
 - 点击运算符按钮（+、-、×、÷）填入表达式

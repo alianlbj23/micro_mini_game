@@ -4,7 +4,7 @@ import random
 GAME_CONFIG = {
     "randomize_levels": False,
     "operators": ["+", "-", "×", "÷"],
-    "level_count": 10,
+    "level_count": 11,
 }
 
 
@@ -74,6 +74,34 @@ LEVELS = [
             "ja": "究極の挑戦：各記号は最大2回まで、19になる組み合わせを見つけよう！",
         },
         "operatorLimits": {"+": 2, "-": 2, "×": 2, "÷": 2},
+    },
+    {
+        "numbers": [6, 6, 6, 6],
+        "targetDisplay": {"zh": "奇數", "ja": "奇数"},
+        "desc": {
+            "zh": "邏輯題：組出結果為奇數的算式！",
+            "ja": "論理問題：結果が奇数になる式を作ろう！",
+        },
+        "isLogicMode": True,
+        "checkResult": lambda res: res is not None and res % 2 == 1,
+        "logicBlocks": [
+            {
+                "label": "if (result % 2 === 1)",
+                "desc": {
+                    "zh": "// ✓ 成功做出奇數！",
+                    "ja": "// ✓ 奇数を作ることに成功しました！",
+                },
+                "isMatch": lambda res: res is not None and res % 2 == 1,
+            },
+            {
+                "label": "else",
+                "desc": {
+                    "zh": "// ✗ 結果不是奇數",
+                    "ja": "// ✗ 結果は奇数ではありません",
+                },
+                "isMatch": lambda res: res is not None and res % 2 != 1,
+            },
+        ],
     },
     {
         "numbers": [2, 3, 4, 5],
