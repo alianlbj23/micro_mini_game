@@ -19,6 +19,7 @@ from ui_shared import (
     SOFT_AMBER,
     SOFT_BLUE,
     SOFT_GREEN,
+    VIOLET,
     WHITE,
     button,
     draw_text,
@@ -75,6 +76,19 @@ GAMES = [
             "ja": "限られた演算記号で目標の数を分解し、プログラムで条件に合うか確認します。",
         },
     },
+    {
+        "id": "ai_image",
+        "color": VIOLET,
+        "soft": SOFT_AMBER,
+        "title": {
+            "zh": "C 關：AI 圖片偵探",
+            "ja": "C ステージ：AI 画像探偵",
+        },
+        "desc": {
+            "zh": "每關同時顯示 AI 與真實照片各一張，從左右兩張中選出 AI 生成圖片。",
+            "ja": "AI画像と実写画像を1枚ずつ表示し、左右からAI生成画像を選びます。",
+        },
+    },
 ]
 
 
@@ -117,6 +131,15 @@ class MainMenu:
                 initial_lang=self.lang,
                 on_back=self.return_to_menu,
             )
+        elif game_id == "ai_image":
+            from games.AI_game.main import AIGame
+
+            self.active_game = AIGame(
+                screen=self.screen,
+                embedded=True,
+                initial_lang=self.lang,
+                on_back=self.return_to_menu,
+            )
 
     def handle_events(self) -> None:
         self.click_pos = None
@@ -141,6 +164,8 @@ class MainMenu:
                     self.run_game(GAMES[0]["id"])
                 elif event.key == pygame.K_2:
                     self.run_game(GAMES[1]["id"])
+                elif event.key == pygame.K_3:
+                    self.run_game(GAMES[2]["id"])
 
     def draw_language_switcher(self) -> None:
         label = TEXT[self.lang]["language"]
@@ -199,10 +224,11 @@ class MainMenu:
         self.draw_language_switcher()
 
         card_w = 900
-        card_h = 190
-        start_y = 150
+        card_h = 150
+        start_y = 122
+        gap = 174
         for idx, game in enumerate(GAMES):
-            rect = pygame.Rect((SCREEN_WIDTH - card_w) // 2, start_y + idx * 230, card_w, card_h)
+            rect = pygame.Rect((SCREEN_WIDTH - card_w) // 2, start_y + idx * gap, card_w, card_h)
             self.draw_game_card(game, idx, rect)
             if self.active_game is not None:
                 return
