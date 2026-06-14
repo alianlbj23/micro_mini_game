@@ -185,13 +185,21 @@ class Button:
 @dataclass
 class ImageQuestion:
     round_number: int
-    left_image: Path
-    right_image: Path
+    ai_image: Path
+    non_ai_image: Path
     answer: str
 
     @property
-    def ai_image(self) -> Path:
-        return self.left_image if self.answer == "left" else self.right_image
+    def left_image(self) -> Path:
+        return self.ai_image if self.answer == "left" else self.non_ai_image
+
+    @property
+    def right_image(self) -> Path:
+        return self.non_ai_image if self.answer == "left" else self.ai_image
+
+    @property
+    def correct_image(self) -> Path:
+        return self.ai_image
 
 
 class Game:
@@ -258,10 +266,14 @@ class Game:
 
         questions: List[ImageQuestion] = []
         for index, (ai_image, non_ai_image) in enumerate(zip(ai_images, non_ai_images), start=1):
+            if AI_DIR not in ai_image.parents or NON_AI_DIR not in non_ai_image.parents:
+                self.error_message = self.t("load_error")
+                return False
+
             if random.choice([True, False]):
                 questions.append(ImageQuestion(index, ai_image, non_ai_image, "left"))
             else:
-                questions.append(ImageQuestion(index, non_ai_image, ai_image, "right"))
+                questions.append(ImageQuestion(index, ai_image, non_ai_image, "right"))
 
         self.questions = questions
         self.error_message = ""
